@@ -2,6 +2,7 @@ package com.stu.helloserver.controller;
 
 import com.stu.helloserver.common.Result;
 import com.stu.helloserver.model.dto.UserDTO;
+import com.stu.helloserver.model.vo.UserDetailVO;
 import com.stu.helloserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -38,5 +39,26 @@ public class UserController {
             @RequestParam(defaultValue = "1") Integer pageNum,
             @RequestParam(defaultValue = "5") Integer pageSize) {
         return userService.getUserPage(pageNum, pageSize);
+    }
+
+    // 查询用户详情（多表联查 + Redis缓存）
+    @GetMapping("/{id}/detail")
+    public Result<UserDetailVO> getUserDetail(@PathVariable("id") Long userId) {
+        return userService.getUserDetail(userId);
+    }
+
+    // 更新用户扩展信息
+    @PutMapping("/{id}/info")
+    public Result<String> updateUserInfo(@PathVariable("id") Long userId,
+                                         @RequestParam(required = false) String realName,
+                                         @RequestParam(required = false) String phone,
+                                         @RequestParam(required = false) String address) {
+        return userService.updateUserInfo(userId, realName, phone, address);
+    }
+
+    // 删除用户
+    @DeleteMapping("/{id}")
+    public Result<String> deleteUser(@PathVariable("id") Long userId) {
+        return userService.deleteUser(userId);
     }
 }
