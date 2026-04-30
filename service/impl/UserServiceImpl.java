@@ -11,6 +11,7 @@ import com.stu.helloserver.mapper.UserMapper;
 import com.stu.helloserver.model.dto.UserDTO;
 import com.stu.helloserver.model.entity.User;
 import com.stu.helloserver.model.entity.UserInfo;
+import com.stu.helloserver.security.JwtUtil;
 import com.stu.helloserver.service.UserService;
 import com.stu.helloserver.model.vo.UserDetailVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,9 @@ public class UserServiceImpl implements UserService {
         return Result.success("注册成功！");
     }
 
+    @Autowired
+    private JwtUtil jwtUtil;   // 注入 JwtUtil
+
     @Override
     public Result<String> login(UserDTO userDTO) {
         // 1. 根据用户名查询数据库
@@ -67,13 +71,14 @@ public class UserServiceImpl implements UserService {
             return Result.error(ResultCode.USER_NOT_EXIST);
         }
 
-        // 3. 校验密码（演示用明文比较，实际应使用加密验证）
+        // 3. 校验密码
         if (!dbUser.getPassword().equals(userDTO.getPassword())) {
             return Result.error(ResultCode.PASSWORD_ERROR);
         }
 
-        // 登录成功（实际应返回 JWT token，此处简单返回成功信息）
-        return Result.success("登录成功！");
+        // 4. 生成 JWT
+        String jwt = jwtUtil.generateToken(userDTO.getUsername());
+        return Result.success(jwt);
     }
 
     @Override
