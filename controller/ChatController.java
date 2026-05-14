@@ -18,8 +18,8 @@ public class ChatController {
 
     @PostMapping
     public Result<ChatResponseVO> chat(@RequestBody ChatRequestDTO requestDTO) {
-        String answer = chatService.chat(requestDTO.getMessage());
-        ChatResponseVO responseVO = new ChatResponseVO(requestDTO.getMessage(), answer);
+        // 可以增加 sessionId 为空的默认处理，这里直接交给 Service 校验
+        ChatResponseVO responseVO = chatService.chat(requestDTO);
         return Result.success(responseVO);
     }
 }
